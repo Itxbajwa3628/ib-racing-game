@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>IB 3D Car Racing</title>
+<style>
+body{margin:0;background:#111;color:white;text-align:center;font-family:Arial}
+#game{width:300px;height:500px;background:#444;margin:auto;position:relative;overflow:hidden;border:4px solid white}
+#car{width:50px;height:80px;background:red;position:absolute;bottom:20px;left:125px}
+.enemy{width:50px;height:80px;background:yellow;position:absolute;top:-100px}
+#score{font-size:20px;margin:10px}
+</style>
+</head>
+
+<body>
+
+<h2>🚗 IB 3D Car Racing</h2>
+<div id="score">Score: 0</div>
+
+<div id="game">
+<div id="car"></div>
+<div class="enemy" style="left:50px"></div>
+</div>
+
+<script>
+
+let car=document.getElementById("car")
+let enemy=document.querySelector(".enemy")
+let score=0
+
+document.addEventListener("keydown",function(e){
+
+let left=parseInt(window.getComputedStyle(car).getPropertyValue("left"))
+
+if(e.key=="ArrowLeft" && left>0){
+car.style.left=left-50+"px"
+}
+
+if(e.key=="ArrowRight" && left<250){
+car.style.left=left+50+"px"
+}
+
+})
+
+function game(){
+
+let enemyTop=parseInt(window.getComputedStyle(enemy).getPropertyValue("top"))
+
+enemy.style.top=enemyTop+5+"px"
+
+if(enemyTop>500){
+enemy.style.top="-100px"
+enemy.style.left=Math.floor(Math.random()*5)*50+"px"
+score++
+document.getElementById("score").innerText="Score: "+score
+}
+
+requestAnimationFrame(game)
+
+}
+
+game()
+
+</script>
+
+</body>
+</html>

@@ -1,64 +1,90 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>IB 3D Car Racing</title>
+<title>IB Racing Pro</title>
+
 <style>
-body{margin:0;background:#111;color:white;text-align:center;font-family:Arial}
-#game{width:300px;height:500px;background:#444;margin:auto;position:relative;overflow:hidden;border:4px solid white}
-#car{width:50px;height:80px;background:red;position:absolute;bottom:20px;left:125px}
-.enemy{width:50px;height:80px;background:yellow;position:absolute;top:-100px}
-#score{font-size:20px;margin:10px}
+
+body{
+margin:0;
+background:black;
+overflow:hidden;
+}
+
+#road{
+width:300px;
+height:100vh;
+background:gray;
+margin:auto;
+position:relative;
+}
+
+#car{
+width:50px;
+position:absolute;
+bottom:20px;
+left:125px;
+}
+
+.line{
+width:10px;
+height:80px;
+background:white;
+position:absolute;
+left:145px;
+animation:move 1s linear infinite;
+}
+
+@keyframes move{
+0%{top:-100px;}
+100%{top:100vh;}
+}
+
 </style>
 </head>
 
 <body>
 
-<h2>🚗 IB 3D Car Racing</h2>
-<div id="score">Score: 0</div>
+<div id="road">
 
-<div id="game">
-<div id="car"></div>
-<div class="enemy" style="left:50px"></div>
+<img id="car" src="https://i.imgur.com/7QF5FQK.png">
+
+<div class="line" style="top:0"></div>
+<div class="line" style="top:200px"></div>
+<div class="line" style="top:400px"></div>
+
 </div>
+
+<audio id="engine" loop>
+<source src="https://www.soundjay.com/mechanical/sounds/car-engine-1.mp3">
+</audio>
 
 <script>
 
-let car=document.getElementById("car")
-let enemy=document.querySelector(".enemy")
-let score=0
+let car = document.getElementById("car");
+let engine = document.getElementById("engine");
 
-document.addEventListener("keydown",function(e){
+let x = 125;
 
-let left=parseInt(window.getComputedStyle(car).getPropertyValue("left"))
+document.addEventListener("keydown", control);
 
-if(e.key=="ArrowLeft" && left>0){
-car.style.left=left-50+"px"
+function control(e){
+
+if(e.key=="ArrowLeft"){
+x -= 10;
 }
 
-if(e.key=="ArrowRight" && left<250){
-car.style.left=left+50+"px"
+if(e.key=="ArrowRight"){
+x += 10;
 }
 
-})
-
-function game(){
-
-let enemyTop=parseInt(window.getComputedStyle(enemy).getPropertyValue("top"))
-
-enemy.style.top=enemyTop+5+"px"
-
-if(enemyTop>500){
-enemy.style.top="-100px"
-enemy.style.left=Math.floor(Math.random()*5)*50+"px"
-score++
-document.getElementById("score").innerText="Score: "+score
+if(e.key=="ArrowUp"){
+engine.play();
 }
 
-requestAnimationFrame(game)
+car.style.left = x + "px";
 
 }
-
-game()
 
 </script>
 

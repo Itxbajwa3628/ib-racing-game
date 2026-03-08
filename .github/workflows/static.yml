@@ -19,7 +19,7 @@ padding-top:40px;
 }
 
 .carChoice{
-width:120px;
+width:100px;
 margin:15px;
 border:3px solid white;
 }
@@ -67,18 +67,6 @@ top:10px;
 left:10px;
 }
 
-#coins{
-position:absolute;
-top:30px;
-left:10px;
-}
-
-#high{
-position:absolute;
-top:50px;
-left:10px;
-}
-
 #controls{
 position:fixed;
 bottom:20px;
@@ -100,9 +88,9 @@ margin:10px;
 
 <h1>Select Your Car</h1>
 
-<img class="carChoice" src="https://i.imgur.com/7QF5FQK.png" onclick="selectCar(this)">
-<img class="carChoice" src="https://i.imgur.com/1Xq9BiA.png" onclick="selectCar(this)">
-<img class="carChoice" src="https://i.imgur.com/3ZQ3Z4p.png" onclick="selectCar(this)">
+<img class="carChoice" src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Red_car_icon.svg" onclick="selectCar(this)">
+<img class="carChoice" src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Blue_car_icon.svg" onclick="selectCar(this)">
+<img class="carChoice" src="https://upload.wikimedia.org/wikipedia/commons/2/2c/Green_car_icon.svg" onclick="selectCar(this)">
 
 <br>
 
@@ -113,16 +101,12 @@ margin:10px;
 <div id="road">
 
 <div id="score">Score:0</div>
-<div id="coins">Coins:0</div>
-<div id="high">HighScore:0</div>
 
 <img id="car">
 
-<img class="enemy" id="e1" src="https://i.imgur.com/7QF5FQK.png">
-<img class="enemy" id="e2" src="https://i.imgur.com/1Xq9BiA.png">
-<img class="enemy" id="e3" src="https://i.imgur.com/7QF5FQK.png">
-<img class="enemy" id="e4" src="https://i.imgur.com/1Xq9BiA.png">
-<img class="enemy" id="e5" src="https://i.imgur.com/7QF5FQK.png">
+<img class="enemy" id="e1" src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Red_car_icon.svg">
+<img class="enemy" id="e2" src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Blue_car_icon.svg">
+<img class="enemy" id="e3" src="https://upload.wikimedia.org/wikipedia/commons/2/2c/Green_car_icon.svg">
 
 <div class="line" style="top:0"></div>
 <div class="line" style="top:200px"></div>
@@ -137,19 +121,13 @@ margin:10px;
 
 </div>
 
-<audio id="engine" loop>
-<source src="https://www.soundjay.com/mechanical/sounds/car-engine-1.mp3">
-</audio>
-
 <script>
 
 let selectedCar="";
 let car=document.getElementById("car");
 
 function selectCar(img){
-
 selectedCar=img.src;
-
 }
 
 function startGame(){
@@ -171,27 +149,18 @@ moveEnemy();
 let enemies=[
 document.getElementById("e1"),
 document.getElementById("e2"),
-document.getElementById("e3"),
-document.getElementById("e4"),
-document.getElementById("e5")
+document.getElementById("e3")
 ];
 
 let x=125;
 let score=0;
-let coins=0;
-let speed=5;
 
-let highScore=localStorage.getItem("highscore")||0;
-
-let y=[-100,-300,-500,-700,-900];
-
-document.getElementById("high").innerText="HighScore:"+highScore;
+let y=[-100,-300,-500];
 
 function moveLeft(){
 
 x-=20;
 if(x<0)x=0;
-
 car.style.left=x+"px";
 
 }
@@ -200,38 +169,21 @@ function moveRight(){
 
 x+=20;
 if(x>250)x=250;
-
 car.style.left=x+"px";
 
 }
 
 function moveEnemy(){
 
-for(let i=0;i<5;i++){
+for(let i=0;i<3;i++){
 
-y[i]+=speed+i;
+y[i]+=6;
 
 if(y[i]>window.innerHeight){
 
 y[i]=-200;
-
 enemies[i].style.left=Math.random()*250+"px";
-
 score++;
-coins++;
-
-if(score>highScore){
-
-highScore=score;
-localStorage.setItem("highscore",highScore);
-
-}
-
-if(score%10==0){
-
-speed+=1;
-
-}
 
 }
 
@@ -242,7 +194,6 @@ checkCrash(enemies[i]);
 }
 
 document.getElementById("score").innerText="Score:"+score;
-document.getElementById("coins").innerText="Coins:"+coins;
 
 requestAnimationFrame(moveEnemy);
 
@@ -263,7 +214,6 @@ carRect.bottom>eRect.top
 ){
 
 alert("Game Over Score:"+score);
-
 location.reload();
 
 }

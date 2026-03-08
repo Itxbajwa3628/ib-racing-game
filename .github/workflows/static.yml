@@ -1,43 +1,276 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+<!DOCTYPE html>
+<html>
+<head>
+<title>IB Racing Pro</title>
 
-on:
-  # Runs on pushes targeting the default branch
-  push:
-    branches: ["main"]
+<style>
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+body{
+margin:0;
+background:black;
+font-family:Arial;
+color:white;
+text-align:center;
+overflow:hidden;
+}
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+#menu{
+padding-top:40px;
+}
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
+.carChoice{
+width:120px;
+margin:15px;
+border:3px solid white;
+}
 
-jobs:
-  # Single deploy job since we're just deploying
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          # Upload entire repository
-          path: '.'
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+#road{
+display:none;
+width:300px;
+height:100vh;
+background:gray;
+margin:auto;
+position:relative;
+overflow:hidden;
+}
+
+#car{
+width:50px;
+position:absolute;
+bottom:20px;
+left:125px;
+}
+
+.enemy{
+width:50px;
+position:absolute;
+top:-100px;
+}
+
+.line{
+width:10px;
+height:80px;
+background:white;
+position:absolute;
+left:145px;
+animation:move 1s linear infinite;
+}
+
+@keyframes move{
+0%{top:-100px;}
+100%{top:100vh;}
+}
+
+#score{
+position:absolute;
+top:10px;
+left:10px;
+}
+
+#coins{
+position:absolute;
+top:30px;
+left:10px;
+}
+
+#high{
+position:absolute;
+top:50px;
+left:10px;
+}
+
+#controls{
+position:fixed;
+bottom:20px;
+width:100%;
+}
+
+button{
+font-size:25px;
+padding:10px 20px;
+margin:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="menu">
+
+<h1>Select Your Car</h1>
+
+<img class="carChoice" src="https://i.imgur.com/7QF5FQK.png" onclick="selectCar(this)">
+<img class="carChoice" src="https://i.imgur.com/1Xq9BiA.png" onclick="selectCar(this)">
+<img class="carChoice" src="https://i.imgur.com/3ZQ3Z4p.png" onclick="selectCar(this)">
+
+<br>
+
+<button onclick="startGame()">Start Game</button>
+
+</div>
+
+<div id="road">
+
+<div id="score">Score:0</div>
+<div id="coins">Coins:0</div>
+<div id="high">HighScore:0</div>
+
+<img id="car">
+
+<img class="enemy" id="e1" src="https://i.imgur.com/7QF5FQK.png">
+<img class="enemy" id="e2" src="https://i.imgur.com/1Xq9BiA.png">
+<img class="enemy" id="e3" src="https://i.imgur.com/7QF5FQK.png">
+<img class="enemy" id="e4" src="https://i.imgur.com/1Xq9BiA.png">
+<img class="enemy" id="e5" src="https://i.imgur.com/7QF5FQK.png">
+
+<div class="line" style="top:0"></div>
+<div class="line" style="top:200px"></div>
+<div class="line" style="top:400px"></div>
+
+</div>
+
+<div id="controls">
+
+<button onclick="moveLeft()">⬅</button>
+<button onclick="moveRight()">➡</button>
+
+</div>
+
+<audio id="engine" loop>
+<source src="https://www.soundjay.com/mechanical/sounds/car-engine-1.mp3">
+</audio>
+
+<script>
+
+let selectedCar="";
+let car=document.getElementById("car");
+
+function selectCar(img){
+
+selectedCar=img.src;
+
+}
+
+function startGame(){
+
+if(selectedCar==""){
+alert("Select Car First");
+return;
+}
+
+document.getElementById("menu").style.display="none";
+document.getElementById("road").style.display="block";
+
+car.src=selectedCar;
+
+moveEnemy();
+
+}
+
+let enemies=[
+document.getElementById("e1"),
+document.getElementById("e2"),
+document.getElementById("e3"),
+document.getElementById("e4"),
+document.getElementById("e5")
+];
+
+let x=125;
+let score=0;
+let coins=0;
+let speed=5;
+
+let highScore=localStorage.getItem("highscore")||0;
+
+let y=[-100,-300,-500,-700,-900];
+
+document.getElementById("high").innerText="HighScore:"+highScore;
+
+function moveLeft(){
+
+x-=20;
+if(x<0)x=0;
+
+car.style.left=x+"px";
+
+}
+
+function moveRight(){
+
+x+=20;
+if(x>250)x=250;
+
+car.style.left=x+"px";
+
+}
+
+function moveEnemy(){
+
+for(let i=0;i<5;i++){
+
+y[i]+=speed+i;
+
+if(y[i]>window.innerHeight){
+
+y[i]=-200;
+
+enemies[i].style.left=Math.random()*250+"px";
+
+score++;
+coins++;
+
+if(score>highScore){
+
+highScore=score;
+localStorage.setItem("highscore",highScore);
+
+}
+
+if(score%10==0){
+
+speed+=1;
+
+}
+
+}
+
+enemies[i].style.top=y[i]+"px";
+
+checkCrash(enemies[i]);
+
+}
+
+document.getElementById("score").innerText="Score:"+score;
+document.getElementById("coins").innerText="Coins:"+coins;
+
+requestAnimationFrame(moveEnemy);
+
+}
+
+function checkCrash(enemy){
+
+let carRect=car.getBoundingClientRect();
+let eRect=enemy.getBoundingClientRect();
+
+if(
+
+carRect.left<eRect.right &&
+carRect.right>eRect.left &&
+carRect.top<eRect.bottom &&
+carRect.bottom>eRect.top
+
+){
+
+alert("Game Over Score:"+score);
+
+location.reload();
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
